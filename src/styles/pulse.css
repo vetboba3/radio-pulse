@@ -1,0 +1,290 @@
+/* ============================================
+   Radio PULSE — Design System
+   Все переменные и классы с префиксом pulse-
+   ============================================ */
+
+:root {
+  /* Фон */
+  --pulse-bg: #F8F7F4;
+  --pulse-bg-shell: rgba(0, 0, 0, 0.06);
+
+  /* Текст */
+  --pulse-text-primary: #1A1A1A;
+  --pulse-text-secondary: #5A5A5A;
+  --pulse-text-muted: #9A9A9A;
+
+  /* Акценты кнопки */
+  --pulse-btn-border: #0D0D0D;
+  --pulse-btn-glow: #3B8BFF;
+  --pulse-btn-glow-soft: rgba(59, 139, 255, 0.35);
+  --pulse-btn-interior: #F0EDE8;
+  --pulse-btn-interior-end: #D8D4CF;
+
+  /* Волны */
+  --pulse-wave-light: rgba(0, 0, 0, 0.08);
+  --pulse-wave-dark: #1A1A1A;
+
+  /* Типографика */
+  --pulse-font-display: 'Cormorant Garamond', Georgia, serif;
+  --pulse-font-body: 'Inter', sans-serif;
+
+  /* Размеры кнопки */
+  --pulse-btn-size: 120px;
+  --pulse-btn-size-mobile: 96px;
+}
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--pulse-bg);
+  font-family: var(--pulse-font-body);
+  color: var(--pulse-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Page Container ---- */
+.pulse-page {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10%;
+}
+
+/* ---- Background ---- */
+.pulse-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--pulse-bg);
+  overflow: hidden;
+}
+
+.pulse-bg__shell {
+  position: absolute;
+  top: -5%;
+  left: -15%;
+  width: 85%;
+  height: auto;
+  max-height: 75%;
+  object-fit: contain;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ---- Light Wave ---- */
+.pulse-wave-light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.08;
+  height: 100%;
+  width: auto;
+}
+
+.pulse-wave-light svg {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* ---- Dark Wave ---- */
+.pulse-wave-dark {
+  position: absolute;
+  left: 50%;
+  top: 43%;
+  transform: translate(-40%, -45%) rotate(90deg) scaleX(-1);
+  z-index: 2;
+  pointer-events: none;
+  height: 80%;
+  width: auto;
+  transition: opacity 0.6s ease;
+}
+
+.pulse-wave-dark svg {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* Анимация пульсации при воспроизведении */
+.pulse-playing .pulse-wave-dark {
+  animation: pulse-wave-breathe 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-wave-breathe {
+  0%, 100% {
+    transform: translate(-40%, -45%) rotate(90deg) scaleX(-1) scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-40%, -45%) rotate(90deg) scaleX(-1) scaleY(1.06);
+    opacity: 0.85;
+  }
+}
+
+/* ---- Button ---- */
+.pulse-btn {
+  position: relative;
+  z-index: 10;
+  width: var(--pulse-btn-size-mobile);
+  height: var(--pulse-btn-size-mobile);
+  border-radius: 50%;
+  border: 3px solid var(--pulse-btn-border);
+  background: radial-gradient(circle, var(--pulse-btn-interior), var(--pulse-btn-interior-end));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--pulse-btn-glow),
+    0 0 20px var(--pulse-btn-glow-soft);
+  transition: box-shadow 0.3s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pulse-btn:hover {
+  box-shadow:
+    0 0 0 3px var(--pulse-btn-glow),
+    0 0 35px var(--pulse-btn-glow-soft),
+    0 0 60px rgba(59, 139, 255, 0.2);
+}
+
+.pulse-btn:active {
+  transform: scale(0.95);
+}
+
+.pulse-btn__icon {
+  width: 32px;
+  height: 32px;
+  fill: var(--pulse-text-primary);
+  transition: opacity 0.2s ease;
+}
+
+/* Glitch-эффект на иконке */
+.pulse-btn__glitch {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.pulse-playing .pulse-btn__glitch {
+  animation: pulse-glitch-flash 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glitch-flash {
+  0%, 90%, 100% { opacity: 0; }
+  92% { opacity: 0.6; clip-path: inset(30% 0 40% 0); }
+  94% { opacity: 0; }
+  96% { opacity: 0.4; clip-path: inset(50% 0 20% 0); }
+  98% { opacity: 0; }
+}
+
+/* Анимация кольца при воспроизведении */
+.pulse-playing .pulse-btn {
+  animation: pulse-ring-anim 2s ease-in-out infinite;
+}
+
+@keyframes pulse-ring-anim {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px var(--pulse-btn-glow),
+      0 0 20px var(--pulse-btn-glow-soft);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--pulse-btn-glow),
+      0 0 40px var(--pulse-btn-glow-soft),
+      0 0 80px rgba(59, 139, 255, 0.15);
+  }
+}
+
+/* ---- Title ---- */
+.pulse-title {
+  position: absolute;
+  right: 16px;
+  bottom: 40px;
+  z-index: 5;
+  font-family: var(--pulse-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(64px, 18vw, 120px);
+  line-height: 0.85;
+  color: var(--pulse-text-primary);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- Label ---- */
+.pulse-label {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pulse-label svg {
+  height: 14px;
+  width: auto;
+  display: block;
+}
+
+/* ---- Responsive (Desktop) ---- */
+@media (min-width: 768px) {
+  .pulse-btn {
+    width: var(--pulse-btn-size);
+    height: var(--pulse-btn-size);
+  }
+
+  .pulse-btn__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pulse-bg__shell {
+    top: -10%;
+    left: -10%;
+    width: 70%;
+    max-height: 85%;
+  }
+
+  .pulse-title {
+    bottom: 60px;
+  }
+
+  .pulse-label {
+    bottom: 40px;
+  }
+
+  .pulse-label svg {
+    height: 16px;
+  }
+}
