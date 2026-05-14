@@ -4,8 +4,8 @@
     <PulseWaveLight />
     <PulseWaveDark />
     <PulseButton :is-playing="isPlaying" @toggle="isPlaying = !isPlaying" />
-    <PulseTitle />
-    <PulseLabel />
+    <PulseLogo />
+    <PulseCommunity />
   </div>
 </template>
 
@@ -15,8 +15,8 @@ import PulseBackground from '../components/PulseBackground.vue'
 import PulseWaveLight from '../components/PulseWaveLight.vue'
 import PulseWaveDark from '../components/PulseWaveDark.vue'
 import PulseButton from '../components/PulseButton.vue'
-import PulseTitle from '../components/PulseTitle.vue'
-import PulseLabel from '../components/PulseLabel.vue'
+import PulseLogo from '../components/PulseLogo.vue'
+import PulseCommunity from '../components/PulseCommunity.vue'
 
 const isPlaying = ref(false)
 </script>

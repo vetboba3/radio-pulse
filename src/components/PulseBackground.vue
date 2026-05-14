@@ -2,10 +2,11 @@
   <div class="pulse-bg">
     <img
       class="pulse-bg__shell"
-      src="/references/photo_3_2026-05-06_16-28-17.jpg"
+      src="/references/fon.jpg"
       alt=""
       aria-hidden="true"
     />
+    <div class="pulse-bg__overlay" aria-hidden="true"></div>
   </div>
 </template>
 

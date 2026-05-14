@@ -4,26 +4,23 @@
     :aria-label="isPlaying ? 'Пауза' : 'Воспроизвести'"
     @click="handleToggle"
   >
-    <!-- Play icon -->
-    <svg
-      v-if="!isPlaying"
-      class="pulse-btn__icon"
-      viewBox="0 0 32 32"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <polygon points="10,6 26,16 10,26" />
+    <svg viewBox="0 0 40 40" class="pulse-btn__svg" xmlns="http://www.w3.org/2000/svg">
+      <!-- Круг с вырезанной иконкой (используем fill-rule="evenodd") -->
+      <path 
+        fill-rule="evenodd" 
+        clip-rule="evenodd" 
+        d="M20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0ZM14 10L30 20L14 30V10Z" 
+        v-if="!isPlaying"
+        fill="var(--pulse-wave-dark)" 
+      />
+      <path 
+        fill-rule="evenodd" 
+        clip-rule="evenodd" 
+        d="M20 0C8.9543 0 0 8.9543 0 20C0 31.0457 8.9543 40 20 40C31.0457 40 40 31.0457 40 20C40 8.9543 31.0457 0 20 0ZM12 10H17V30H12V10ZM23 10H28V30H23V10Z" 
+        v-else
+        fill="var(--pulse-wave-dark)" 
+      />
     </svg>
-    <!-- Pause icon -->
-    <svg
-      v-else
-      class="pulse-btn__icon"
-      viewBox="0 0 32 32"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="8" y="6" width="5" height="20" />
-      <rect x="19" y="6" width="5" height="20" />
-    </svg>
-    <!-- Glitch overlay -->
     <span class="pulse-btn__glitch" aria-hidden="true"></span>
   </button>
 </template>
@@ -38,71 +35,48 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle'])
 
-const playlist = [
-  '/1.mp3',
-  '/2.mp3',
-  '/3.mp3',
-  '/4.mp3',
-  '/5.mp3',
-  '/6.mp3',
-  '/8 марта.mp3',
-  '/dram and buss 1.mp3',
-  '/drum and buss 2.mp3',
-  '/Гимн  (1).mp3',
-  '/Гимн .mp3',
-  '/Для Ирины.mp3',
-  '/Код любви.mp3',
-  '/Лошадь и обезьяны.mp3',
-  '/Лучший.mp3',
-  '/Ната, фо ю.mp3',
-  '/Пить или жить_.mp3',
-  '/Пить, или жить.mp3',
-  '/Прозрение 1.mp3',
-  '/Прозрение 2.mp3',
-  '/Река 1.mp3',
-  '/Река 2.mp3',
-  '/Сова .mp3',
-  '/Сон.mp3',
-  '/Супер Гид .mp3',
-  '/белка (1).mp3',
-  '/белка.mp3'
-]
+// URL вашего потока. Пока пусто или локальный адрес для теста.
+const streamUrl = 'http://localhost:3000/radio'
 
 let audio = null
-let currentTrackIndex = 0
-let isStarted = false
+let isInitialized = false
 
-function playCurrentTrack() {
-  if (audio) {
-    audio.pause()
-  }
-  audio = new Audio(playlist[currentTrackIndex])
-  // Если мы переключаем трек в фоне (на паузе), он должен оставаться без звука
-  audio.muted = !props.isPlaying
-  audio.addEventListener('ended', playNextTrack)
-  audio.play().catch(e => console.error('Ошибка воспроизведения:', e))
-}
+function initAudio(willPlay) {
+  if (audio) return
 
-function playNextTrack() {
-  currentTrackIndex = (currentTrackIndex + 1) % playlist.length
-  playCurrentTrack()
+  audio = new Audio(streamUrl)
+  // В режиме Live stream 'preload' лучше ставить 'none' или 'metadata', 
+  // но для "Always On" мы сразу начинаем загрузку.
+  audio.preload = 'auto'
+  audio.muted = !willPlay
+  
+  // Обработка ошибок подключения
+  audio.addEventListener('error', (e) => {
+    console.error('Ошибка потока Radio PULSE:', e)
+    // Можно добавить логику авто-переподключения здесь
+    isInitialized = false
+    audio = null
+  })
+
+  audio.play().catch(e => {
+    console.warn('Автовоспроизведение заблокировано или поток недоступен:', e)
+  })
 }
 
 function handleToggle() {
   const willPlay = !props.isPlaying
   emit('toggle')
 
-  if (!isStarted) {
-    // Первый запуск эфира
-    isStarted = true
-    audio = new Audio(playlist[currentTrackIndex])
+  if (!isInitialized) {
+    isInitialized = true
+    initAudio(willPlay)
+  } else if (audio) {
+    // Просто переключаем звук, поток продолжает идти в фоне
     audio.muted = !willPlay
-    audio.addEventListener('ended', playNextTrack)
-    audio.play().catch(e => console.error('Ошибка воспроизведения:', e))
-  } else {
-    // Эфир уже идёт, просто выключаем/включаем звук
-    if (audio) {
-      audio.muted = !willPlay
+    
+    // На случай, если поток прервался или был на паузе браузером
+    if (audio.paused && willPlay) {
+      audio.play().catch(p => console.error('Не удалось возобновить поток:', p))
     }
   }
 }
