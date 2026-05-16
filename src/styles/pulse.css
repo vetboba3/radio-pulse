@@ -4,6 +4,12 @@
    ============================================ */
 
 :root {
+  /* Якорь — центр ракушки на fon.jpg (% координаты НА картинке) */
+  --anchor-img-x: 37;
+  --anchor-img-y: 42;
+  --img-ratio: calc(1280 / 819);
+  /* высота/ширина fon.jpg */
+
   /* Фон */
   --pulse-bg: #F1F1F1;
   --pulse-bg-shell: rgba(0, 0, 0, 0.06);
@@ -47,7 +53,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--pulse-bg);
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), var(--pulse-bg);
   font-family: var(--pulse-font-body);
   color: var(--pulse-text-primary);
   -webkit-font-smoothing: antialiased;
@@ -57,14 +63,34 @@ body {
 #app {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 /* ---- Page Container ---- */
-.pulse-page {
+.pulse-wrapper {
   position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 100%;
+  max-width: 365px;
+  max-height: 700px;
   overflow: hidden;
+  container-type: inline-size;
+}
+
+/* ---- Anchor Debug Dot ---- */
+.pulse-anchor-dot {
+  position: absolute;
+  left: calc(var(--anchor-img-x) * 1cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi);
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  pointer-events: none;
 }
 
 /* ---- Background ---- */
@@ -97,13 +123,12 @@ body {
 /* ---- Light Wave ---- */
 .pulse-wave-light {
   position: absolute;
-  left: -30%;
-  top: 30%;
-  transform: translateY(-30%);
+  left: calc(var(--anchor-img-x) * 1cqi - 60cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi - 60cqi);
   z-index: 1;
   pointer-events: none;
   opacity: 0.6;
-  height: 85%;
+  height: 170cqi;
   width: auto;
 }
 
@@ -116,15 +141,13 @@ body {
 /* ---- Dark Wave ---- */
 .pulse-wave-dark {
   position: absolute;
-  right: -20%;
-  top: 27.5%;
+  left: calc(var(--anchor-img-x) * 1cqi + 3cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi - 5.6cqi);
   transform: translateY(-50%) scaleY(1.5);
   z-index: 2;
   pointer-events: none;
-  height: 50%;
-  width: 80%;
-  display: flex;
-  justify-content: flex-end;
+  height: 70cqi;
+  width: 85cqi;
   transition: opacity 0.6s ease;
 }
 
@@ -138,6 +161,7 @@ body {
 /* Анимация пульсации при воспроизведении */
 .pulse-playing .pulse-wave-dark {
   animation: pulse-wave-breathe 2.5s ease-in-out infinite;
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi - 4.1cqi);
 }
 
 @keyframes pulse-wave-breathe {
@@ -157,12 +181,12 @@ body {
 /* ---- Button ---- */
 .pulse-btn {
   position: absolute;
-  left: 37%;
-  top: 30%;
+  left: calc(var(--anchor-img-x) * 1cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi);
   transform: translate(-50%, -50%);
   z-index: 10;
-  width: var(--pulse-btn-size-mobile);
-  height: var(--pulse-btn-size-mobile);
+  width: 11cqi;
+  height: 11cqi;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -275,10 +299,10 @@ body {
 /* ---- Logo & Community (Independent) ---- */
 .pulse-logo {
   position: absolute;
-  bottom: 20%;
-  left: 37.5%;
+  left: calc(var(--anchor-img-x) * 1cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi + 50cqi);
   transform: translateX(-50%);
-  width: 75%;
+  width: 75cqi;
   height: auto;
   z-index: 5;
   display: block;
@@ -286,41 +310,11 @@ body {
 
 .pulse-community {
   position: absolute;
-  bottom: 12%;
-  left: 50%;
+  left: calc(var(--anchor-img-x) * 1cqi + 13cqi);
+  top: calc(var(--anchor-img-y) * var(--img-ratio) * 1cqi + 93cqi);
   transform: translateX(-50%);
-  width: 34%;
+  width: 34cqi;
   height: auto;
   z-index: 5;
   display: block;
-}
-
-/* ---- Responsive (Desktop) ---- */
-@media (min-width: 768px) {
-  .pulse-btn {
-    width: var(--pulse-btn-size);
-    height: var(--pulse-btn-size);
-  }
-
-  .pulse-btn__icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .pulse-bg__shell {
-    top: -10%;
-    left: -10%;
-    width: 70%;
-    max-height: 85%;
-  }
-
-  .pulse-logo {
-    bottom: 32px;
-    width: 55%;
-  }
-
-  .pulse-community {
-    bottom: 16px;
-    width: 32%;
-  }
 }

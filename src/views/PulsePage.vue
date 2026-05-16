@@ -1,5 +1,6 @@
 <template>
-  <div class="pulse-page" :class="{ 'pulse-playing': isPlaying }">
+  <div class="pulse-wrapper" :class="{ 'pulse-playing': isPlaying }">
+    <div class="pulse-anchor-dot"></div>
     <PulseBackground />
     <PulseWaveLight />
     <PulseWaveDark />
